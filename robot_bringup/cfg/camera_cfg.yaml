@@ -1,0 +1,56 @@
+!!python/object/new:dynamic_reconfigure.encoding.Config
+dictitems:
+  Blue_gain: 60.0
+  Exposure_auto: Manual
+  Exposure_time: 1000.0
+  Gain: 0.0
+  Gain_auto: Continuous
+  Green_gain: 60.0
+  Red_gain: 60.0
+  Trigger_WB: true
+  groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+    dictitems:
+      Trigger_WB: true
+      groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+        dictitems:
+          Auto_function_control: !!python/object/new:dynamic_reconfigure.encoding.Config
+            dictitems:
+              Exposure_auto: Manual
+              Gain_auto: Continuous
+              groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+                state: []
+              id: 1
+              name: Auto_function_control
+              parameters: !!python/object/new:dynamic_reconfigure.encoding.Config
+                state: []
+              parent: 0
+              state: true
+              type: ''
+            state: []
+          Manual_function_control: !!python/object/new:dynamic_reconfigure.encoding.Config
+            dictitems:
+              Blue_gain: 60.0
+              Exposure_time: 1000.0
+              Gain: 0.0
+              Green_gain: 60.0
+              Red_gain: 60.0
+              groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+                state: []
+              id: 2
+              name: Manual_function_control
+              parameters: !!python/object/new:dynamic_reconfigure.encoding.Config
+                state: []
+              parent: 0
+              state: true
+              type: ''
+            state: []
+        state: []
+      id: 0
+      name: Default
+      parameters: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      parent: 0
+      state: true
+      type: ''
+    state: []
+state: []

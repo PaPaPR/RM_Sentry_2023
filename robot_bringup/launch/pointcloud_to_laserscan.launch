@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+<launch>
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_livox_lidar_link_broadcaster"
+          args="0.0  0.0 0.0  0.0  0.0 0.0 /base_link /livox_frame" />
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_laser_link_broadcaster"
+          args="0.0  0.0 0.0  0.0  0.0 0.0 /base_link /laser_link" />
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_odom_init_broadcaster"
+          args="0.0  0.0 0.0  0.0  0.0 0.0 /aft_mapped /base_link" />
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_odom_broadcaster"
+          args="0.0  0.0 0.0  0.0  0.0 0.0 /odom /camera_init" />
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="map_odom_broadcaster"
+          args="1.0  1.0 0.0  0.0  0.0 0.0 /map /odom" />
+
+    <!-- run pointcloud_to_laserscan node -->
+    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan">
+
+        <remap from="cloud_in" to="/livox/lidar"/>
+        <!-- <remap from="scan" to="$(arg camera)/scan"/> -->
+        <rosparam>
+            target_frame: laser_link # Leave disabled to output scan in pointcloud frame
+            transform_tolerance: 0.01
+            min_height: 0.0
+            max_height: 0.2
+
+            angle_min: -1.5708 # -M_PI/2
+            angle_max: 1.5708 # M_PI/2
+            angle_increment: 0.0087 # M_PI/360.0
+            scan_time: 0.3333
+            range_min: 0.45
+            range_max: 20.0
+            use_inf: true
+
+            # Concurrency level, affects number of pointclouds queued for processing and number of threads used
+            # 0 : Detect number of cores
+            # 1 : Single threaded
+            # 2->inf : Parallelism level
+            concurrency_level: 0
+        </rosparam>
+
+    </node>
+
+</launch>

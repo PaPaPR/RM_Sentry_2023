@@ -1,0 +1,9 @@
+<launch>
+  
+  <node name="mv_camera_ros_node" pkg="mv_camera_ros" type="mv_camera_ros" output="screen">
+    <remap from="/mv_camera_ros_node/image_raw" to="/mvsua_cam/image_raw1" />
+  </node>
+
+  <node name="dynparam" pkg="dynamic_reconfigure" type="dynparam" output="screen"
+    args="load /mv_camera_ros_node $(find robot_bringup)cfg/camera_cfg.yaml"/>
+</launch>
