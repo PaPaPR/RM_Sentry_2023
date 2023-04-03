@@ -1,0 +1,16 @@
+<launch>
+	<node pkg="robot_base" type="robot_base_node" name="robot_base_node" output="screen">
+		<param name="map_init_x" type="double" value="1.0"/>
+		<param name="map_init_y" type="double" value="1.0"/>
+		<param name="map_init_yaw" type="double" value="0.0"/>
+		<param name="gimbal2chassis_x" type="double" value="-0.08"/>
+		<param name="gimbal2chassis_y" type="double" value="0.134"/>
+		
+	</node>
+
+	    <!-- <arg name="map_yaml_file" default="$(find robot_bringup)/map/b3-4.yaml" /> -->
+    <arg name="map_yaml_file" default="$(find robot_bringup)/map/icra2019.yaml" />
+
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_yaml_file)" />
+
+</launch>

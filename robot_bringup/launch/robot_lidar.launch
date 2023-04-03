@@ -1,0 +1,8 @@
+<launch>
+	<include file="$(find robot_bringup)/launch/msg_MID360.launch"/>
+
+	<include file="$(find robot_bringup)/launch/pointcloud_to_laserscan.launch"/>
+
+	<include file="$(find robot_bringup)/launch/mapping_avia.launch"/>
+
+</launch>
