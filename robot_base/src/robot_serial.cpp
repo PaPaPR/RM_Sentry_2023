@@ -60,8 +60,8 @@ void RobotSerial::ChassisCMD(const float _lx, const float _ly,
                              const float _az) {
   std::lock_guard<std::mutex> lck(cmd_mtx_);
   robot_cmd_buff_.chassis_lx = _lx;
-  robot_cmd_buff_.chassis_ly = -_ly;
-  robot_cmd_buff_.chassis_az = -_az;
+  robot_cmd_buff_.chassis_ly = _ly;
+  robot_cmd_buff_.chassis_az = _az;
 }
 
 void RobotSerial::GimbalCMD(const float _yaw, const float _pitch,

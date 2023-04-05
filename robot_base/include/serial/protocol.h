@@ -4,7 +4,7 @@ struct CMDRobotBuff {
   uint8_t start = (unsigned)'S';
   float chassis_lx = 0.f;     // 底盘 x 轴速度
   float chassis_ly = 0.f;     // 底盘 y 轴速度
-  float chassis_az = 0.f;     // 底盘自旋（顺时针为正）
+  float chassis_az = 0.f;     // 底盘自旋（顺时针为负）
   float gimbal_yaw = 0.f;     // 云台 yaw 运动角度
   float gimbal_pitch = 0.f;   // 云台 pitch 运动角度
   uint8_t auto_fire = false;  // 自动开火
