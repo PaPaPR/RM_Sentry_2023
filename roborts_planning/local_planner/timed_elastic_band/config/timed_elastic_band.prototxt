@@ -7,7 +7,7 @@ trajectory_opt {
     teb_autosize: True
     dt_ref: 0.15
     dt_hysteresis: 0.01
-    global_plan_overwrite_orientation: true 
+    global_plan_overwrite_orientation: false 
     allow_init_with_backwards_motion: false 
     global_plan_viapoint_sep: 1.5
     via_points_ordered: False
@@ -21,21 +21,21 @@ trajectory_opt {
 }
 
 kinematics_opt {
-    max_vel_x: 2.5
-    max_vel_x_backwards: 0.2
-    max_vel_y: 2.5
-    max_vel_theta: 2.5
-    acc_lim_x: 2.6
-    acc_lim_y: 2.6
-    acc_lim_theta: 2.6
+    max_vel_x: 2.0
+    max_vel_x_backwards: 2.0
+    max_vel_y: 2.0
+    max_vel_theta: 2.0
+    acc_lim_x: 1.6
+    acc_lim_y: 1.6
+    acc_lim_theta: 1.6
     min_turning_radius: 0
     wheelbase: 0
     cmd_angle_instead_rotvel: false
 }
 
 tolerance_opt {
-    xy_goal_tolerance: 0.1
-    yaw_goal_tolerance: 0.1
+    xy_goal_tolerance: 0.2
+    yaw_goal_tolerance: 0.2
     free_goal_vel: False
 }
 
@@ -53,20 +53,20 @@ obstacles_opt {
 robot_type {
     type: POINT
     robot_vertices {
-        x: 0.3
-        y: 0.225
+        x: 0.35
+        y: 0.25
     }
     robot_vertices {
-        x: -0.3
-        y: 0.225
+        x: -0.35
+        y: 0.25
     }
     robot_vertices {
-        x: -0.3
-        y: -0.225
+        x: -0.35
+        y: -0.25
     }
     robot_vertices {
-        x: 0.3
-        y: -0.225
+        x: 0.35
+        y: -0.25
     }
 }
 
@@ -76,12 +76,12 @@ optimize_info {
     optimization_activate: True
     optimization_verbose: False
     penalty_epsilon: 0.1
-    weight_max_vel_x: 1
-    weight_max_vel_y: 1
-    weight_max_vel_theta: 3
-    weight_acc_lim_x: 1
-    weight_acc_lim_y: 1
-    weight_acc_lim_theta: 3
+    weight_max_vel_x: 0.00001
+    weight_max_vel_y: 0.001
+    weight_max_vel_theta: 0.00001
+    weight_acc_lim_x: 0.00001
+    weight_acc_lim_y: 0.001
+    weight_acc_lim_theta: 0.00001
     weight_kinematics_nh: 1
     weight_kinematics_forward_drive: 1
     weight_kinematics_turning_radius: 0.0
