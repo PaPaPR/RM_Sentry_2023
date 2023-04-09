@@ -1,4 +1,6 @@
 <launch>
+    <include file="$(find robot_bringup)/launch/static_tf.launch"/>
+
 	<node pkg="robot_base" type="robot_base_node" name="robot_base_node" output="screen">
 		<param name="map_init_x" type="double" value="1.0"/>
 		<param name="map_init_y" type="double" value="1.0"/>

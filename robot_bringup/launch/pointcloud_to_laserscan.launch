@@ -1,12 +1,10 @@
 <?xml version="1.0"?>
 
 <launch>
-      <include file="$(find robot_bringup)/launch/static_tf.launch"/>
-
     <!-- run pointcloud_to_laserscan node -->
     <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan">
 
-        <remap from="cloud_in" to="/livox/lidar"/>
+        <remap from="cloud_in" to="/livox/lidar_pcl2"/>
         <!-- <remap from="scan" to="$(arg camera)/scan"/> -->
         <rosparam>
             target_frame: laser_link # Leave disabled to output scan in pointcloud frame

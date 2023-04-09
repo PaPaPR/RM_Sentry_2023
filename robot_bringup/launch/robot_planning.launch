@@ -7,7 +7,7 @@
 
   <node pkg="roborts_decision" type="behavior_test_node" name="behavior_test_node" respawn="false"  output="screen"/>
 
-  <node pkg="roborts_planning" type="vel_converter" name="vel_converter" respawn="false"/>
+  <!-- <node pkg="roborts_planning" type="vel_converter" name="vel_converter" respawn="false"/> -->
 
 </launch>
 

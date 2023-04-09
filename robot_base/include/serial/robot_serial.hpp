@@ -6,6 +6,22 @@
 #include "protocol.h"
 #include "serial/serial.h"
 
+struct CHASSISCMD
+{
+  float lx {0.f};
+  float ly {0.f};
+  float az {0.f};
+  float forward {0.f};
+};
+
+struct GIMBALCMD
+{
+  float yaw {0.f};
+  float pitch {0.f};
+  bool auto_fire {false};
+};
+
+
 class RobotSerial : public serial::Serial {
  public:
   RobotSerial(std::string port, unsigned long baud);
@@ -15,17 +31,25 @@ class RobotSerial : public serial::Serial {
   bool SendCMD();
   int RecvCMD();
 
-  void ChassisCMD(const float _lx, const float _ly, const float _az);
-  void GimbalCMD(const float _yaw, const float _pitch, const bool _auto_fire);
+  void ChassisCMD(const CHASSISCMD &_cmd);
+  void ChassisModeSet(const int _mode);
+  void GimbalCMD(const GIMBALCMD &_cmd);
 
   void ReadINF(INFChassisGimbalBuf &_chassis_inf);
+  void ReadCompetition(INFCompetitionBuf &_competition_inf);
 
  private:
+  // 控制信息
   INFChassisGimbalBuf robot_inf_buf_;
-  CMDRobotBuff robot_cmd_buff_;
-
-  std::mutex cmd_mtx_;
   std::mutex inf_mtx_;
+
+  // 控制指令
+  CMDRobotBuff robot_cmd_buff_;
+  std::mutex cmd_mtx_;
+
+  // 比赛信息
+  INFCompetitionBuf competition_buf_;
+  std::mutex competition_inf_mtx_;
 
   // static constexpr unsigned char CRC8_Table[] = {
   //     0, 94, 188, 226, 97, 63, 221, 131, 194, 156, 126, 32, 163, 253, 31, 65,

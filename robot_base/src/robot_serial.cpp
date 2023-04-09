@@ -50,29 +50,44 @@ int RobotSerial::RecvCMD() {
         return INF_CHASSIS_GIMBAL;
       }
     }
+    case INF_COMPETITION: {
+      this->read((uint8_t *)&competition_buf_, sizeof(competition_buf_));
+      if (competition_buf_.end == (unsigned)'E') {
+        std::lock_guard<std::mutex> lck(competition_inf_mtx_);
+        return INF_CHASSIS_GIMBAL;
+      }
+    }
     default:
       break;
   }
   return false;
 }
 
-void RobotSerial::ChassisCMD(const float _lx, const float _ly,
-                             const float _az) {
+void RobotSerial::ChassisCMD(const CHASSISCMD &_cmd) {
   std::lock_guard<std::mutex> lck(cmd_mtx_);
-  robot_cmd_buff_.chassis_lx = _lx;
-  robot_cmd_buff_.chassis_ly = _ly;
-  robot_cmd_buff_.chassis_az = _az;
+  robot_cmd_buff_.chassis_lx = _cmd.lx;
+  robot_cmd_buff_.chassis_ly = _cmd.ly;
+  robot_cmd_buff_.chassis_az = _cmd.az;
+  robot_cmd_buff_.chassis_forward = _cmd.forward;
 }
 
-void RobotSerial::GimbalCMD(const float _yaw, const float _pitch,
-                            const bool _auto_fire) {
+void RobotSerial::ChassisModeSet(const int _mode) {
+  robot_cmd_buff_.chassis_mode = _mode;
+}
+
+void RobotSerial::GimbalCMD(const GIMBALCMD &_cmd) {
   std::lock_guard<std::mutex> lck(cmd_mtx_);
-  robot_cmd_buff_.gimbal_yaw = _yaw;
-  robot_cmd_buff_.gimbal_pitch = _pitch;
-  robot_cmd_buff_.auto_fire = _auto_fire;
+  robot_cmd_buff_.gimbal_yaw = _cmd.yaw;
+  robot_cmd_buff_.gimbal_pitch = _cmd.pitch;
+  robot_cmd_buff_.auto_fire = _cmd.auto_fire;
 }
 
 void RobotSerial::ReadINF(INFChassisGimbalBuf &_chassis_inf) {
   std::lock_guard<std::mutex> lck(inf_mtx_);
   _chassis_inf = robot_inf_buf_;
+}
+
+void RobotSerial::ReadCompetition(INFCompetitionBuf &_competition_inf) {
+  std::lock_guard<std::mutex> lck(competition_inf_mtx_);
+  _competition_inf = competition_buf_;
 }
