@@ -8,7 +8,7 @@ common:
     time_diff_lidar_to_imu: 0.0 # Time offset between LiDAR and IMU calibrated by other algorithms, e.g., LI-Init (find in Readme)
 
 preprocess:
-    lidar_type: 2
+    lidar_type: 1
     scan_line: 6
     timestamp_unit: 1           # the unit of time/t field in the PointCloud2 rostopic: 0-second, 1-milisecond, 2-microsecond, 3-nanosecond.
     blind: 1.0 

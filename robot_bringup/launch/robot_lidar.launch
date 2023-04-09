@@ -1,4 +1,5 @@
 <launch>
+	<!-- 雷达 ros 驱动需要修改为同时输出自定义格式和 pcl2 格式，且两者频率不同。 -->
 	<include file="$(find robot_bringup)/launch/msg_MID360.launch"/>
 
 	<include file="$(find robot_bringup)/launch/pointcloud_to_laserscan.launch"/>
