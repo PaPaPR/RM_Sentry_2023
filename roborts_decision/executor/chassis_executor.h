@@ -7,10 +7,18 @@
 #include "roborts_msgs/LocalPlannerAction.h"
 #include "roborts_msgs/TwistAccel.h"
 #include "geometry_msgs/Twist.h"
+#include "robot_base/ChassisCmd.h"
 
 #include "../behavior_tree/behavior_state.h"
 
 namespace roborts_decision{
+
+enum CHASSISMOD{
+  NORMAL = 0,
+  SPINLOW,
+  SPINFAST
+};
+
 /***
  * @brief Chassis Executor to execute different abstracted task for chassis module
  */
@@ -53,6 +61,12 @@ class ChassisExecutor{
    * @return Current chassis executor state(same with behavior state)
    */
   BehaviorState Update();
+
+  /**
+   * @brief Update the current chassis spin mode
+   */
+  void ChangeMode(const CHASSISMOD _mode);
+
   /**
    * @brief Cancel the current task and deal with the mode transition
    */
@@ -87,6 +101,10 @@ class ChassisExecutor{
   ros::Publisher cmd_vel_acc_pub_;
   //! zero twist with acceleration in form of ROS roborts_msgs::TwistAccel
   roborts_msgs::TwistAccel zero_twist_accel_;
+
+  // chassis mode
+  ros::Publisher cmd_pub_;
+  robot_base::ChassisCmd cmd_;
 
 
 };

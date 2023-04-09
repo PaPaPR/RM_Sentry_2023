@@ -10,10 +10,12 @@ ChassisExecutor::ChassisExecutor():execution_mode_(ExcutionMode::IDLE_MODE), exe
   ros::NodeHandle nh;
   cmd_vel_acc_pub_ = nh.advertise<roborts_msgs::TwistAccel>("cmd_vel_acc", 100);
   cmd_vel_pub_     = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1);
+  cmd_pub_     = nh.advertise<robot_base::ChassisCmd>("chassis", 1);
   global_planner_client_.waitForServer();
   ROS_INFO("Global planer server start!");
   local_planner_client_.waitForServer();
   ROS_INFO("Local planer server start!");
+  ChangeMode(NORMAL);
 }
 
 void ChassisExecutor::Execute(const geometry_msgs::PoseStamped &goal){
@@ -40,6 +42,11 @@ void ChassisExecutor::Execute(const roborts_msgs::TwistAccel &twist_accel){
   execution_mode_ = ExcutionMode::SPEED_WITH_ACCEL_MODE;
 
   cmd_vel_acc_pub_.publish(twist_accel);
+}
+
+void ChassisExecutor::ChangeMode(const CHASSISMOD _mode){
+  cmd_.mode = _mode;
+  cmd_pub_.publish(cmd_);
 }
 
 BehaviorState ChassisExecutor::Update(){
