@@ -56,6 +56,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   ChassisCmd.msg
+  RefereeRMUL.msg
 )
 
 ## Generate services in the 'srv' folder

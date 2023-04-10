@@ -36,7 +36,8 @@ class RobotSerial : public serial::Serial {
   void GimbalCMD(const GIMBALCMD &_cmd);
 
   void ReadINF(INFChassisGimbalBuf &_chassis_inf);
-  void ReadCompetition(INFCompetitionBuf &_competition_inf);
+  void ReadCompetition(INFULCompetitionBuf &_competition_inf);
+  void ReadCompetition(INFUCCompetitionBuf &_competition_inf);
 
  private:
   // 控制信息
@@ -48,7 +49,8 @@ class RobotSerial : public serial::Serial {
   std::mutex cmd_mtx_;
 
   // 比赛信息
-  INFCompetitionBuf competition_buf_;
+  INFULCompetitionBuf competition_ul_buf_;
+  INFUCCompetitionBuf competition_uc_buf_;
   std::mutex competition_inf_mtx_;
 
   // static constexpr unsigned char CRC8_Table[] = {

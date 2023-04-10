@@ -28,6 +28,8 @@ robot_base_node::robot_base_node()
     ROS_WARN("serial initial failed.");
   }
 
+  referee_rmul_pub_ = nh_.advertise<robot_base::RefereeRMUL>("/referee", 1);
+
   serial_send_thread_ = std::thread([this] {
     while (ros::ok()) {
       if (!robot_serial_->SendCMD()) ROS_WARN("serial send failed.");
@@ -44,9 +46,10 @@ robot_base_node::robot_base_node()
           this->ChassisGimbalCB(robot_inf);
           break;
         }
-        case INF_COMPETITION: {
-          INFCompetitionBuf competition_buf_;
-          robot_serial_->ReadCompetition(competition_buf_);
+        case REFEREE_RMUL: {
+          RefereeRMULBuf referee_rmul_buf_;
+          robot_serial_->ReadCompetition(referee_rmul_buf_);
+          RefereeRMULCB(referee_rmul_buf_);
         }
         default:
           break;
@@ -258,6 +261,16 @@ void robot_base_node::SendTF() {
 
   base_link_tf_.header.stamp = ros::Time::now();
   base_link_br_.sendTransform(base_link_tf_);
+}
+
+void robot_base_node::RefereeRMULCB(const RefereeRMULBuf &_referee) {
+  robot_base::RefereeRMUL referee;
+  referee.game_progress = _referee.game_progress;
+  referee.game_progress_remain = _referee.game_progress_remain;
+  referee.robot_id = _referee.robot_id;
+  referee.sentry_hp = _referee.sentry_hp;
+
+  referee_rmul_pub_.publish(referee);
 }
 
 int main(int argc, char **argv) {

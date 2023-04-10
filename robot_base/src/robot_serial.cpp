@@ -50,9 +50,9 @@ int RobotSerial::RecvCMD() {
         return INF_CHASSIS_GIMBAL;
       }
     }
-    case INF_COMPETITION: {
-      this->read((uint8_t *)&competition_buf_, sizeof(competition_buf_));
-      if (competition_buf_.end == (unsigned)'E') {
+    case REFEREE_RMUL: {
+      this->read((uint8_t *)&competition_ul_buf_, sizeof(competition_ul_buf_));
+      if (competition_ul_buf_.end == (unsigned)'E') {
         std::lock_guard<std::mutex> lck(competition_inf_mtx_);
         return INF_CHASSIS_GIMBAL;
       }
@@ -87,7 +87,12 @@ void RobotSerial::ReadINF(INFChassisGimbalBuf &_chassis_inf) {
   _chassis_inf = robot_inf_buf_;
 }
 
-void RobotSerial::ReadCompetition(INFCompetitionBuf &_competition_inf) {
+void RobotSerial::ReadCompetition(RefereeRMULBuf &_competition_inf) {
   std::lock_guard<std::mutex> lck(competition_inf_mtx_);
-  _competition_inf = competition_buf_;
+  _competition_inf = competition_ul_buf_;
+}
+
+void RobotSerial::ReadCompetition(INFRMUCBuf &_competition_inf) {
+  std::lock_guard<std::mutex> lck(competition_inf_mtx_);
+  _competition_inf = competition_uc_buf_;
 }

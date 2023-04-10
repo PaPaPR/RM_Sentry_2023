@@ -7,6 +7,7 @@
 
 #include "robot_base/ChassisCmd.h"
 #include "robot_base/UpdateMap2Odom.h"
+#include "robot_base/RefereeRMUL.h"
 #include "roborts_msgs/TwistAccel.h"
 #include "geometry_msgs/Twist.h"
 #include "robot_serial.hpp"
@@ -58,6 +59,9 @@ class robot_base_node {
   std::chrono::high_resolution_clock::time_point time_begin_acc_;
   double base_link_yaw_rad_ {0.}; // 底盘运动方向相对于云台的角度
 
+  // 比赛信息
+  ros::Publisher referee_rmul_pub_;
+
  public:
   robot_base_node();
   ~robot_base_node();
@@ -71,4 +75,5 @@ class robot_base_node {
                            robot_base::UpdateMap2Odom::Response &res);
   void ListenTF();
   void SendTF();
+  void RefereeRMULCB(const RefereeRMULBuf &_inf);
 };

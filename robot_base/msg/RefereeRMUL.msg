@@ -1,0 +1,4 @@
+uint8 game_progress
+uint8 game_progress_remain
+uint8 robot_id
+uint16 sentry_hp
