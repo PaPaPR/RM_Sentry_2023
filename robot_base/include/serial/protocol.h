@@ -25,8 +25,8 @@ struct INFChassisGimbalBuf {
 } __attribute__((packed));
 
 // RMUL 协议
-#define INF_ULCOMPETITION (unsigned)'B'
-struct INFULCompetitionBuf {
+#define REFEREE_RMUL (unsigned)'B'
+struct RefereeRMULBuf {
   uint8_t game_progress{0};         // 比赛阶段
   uint8_t game_progress_remain{0};  // 该比赛阶段剩余时间
   uint8_t robot_id{7};
@@ -35,7 +35,7 @@ struct INFULCompetitionBuf {
 } __attribute__((packed));
 
 // RMUC 协议
-#define INF_UCCOMPETITION (unsigned)'C'
-struct INFUCCompetitionBuf {
+#define REFEREE_RMUC (unsigned)'C'
+struct INFRMUCBuf {
   uint8_t end;
 } __attribute__((packed));
