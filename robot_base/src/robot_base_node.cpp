@@ -21,7 +21,7 @@ robot_base_node::robot_base_node()
   vel_acc_sub_ = nh_.subscribe<roborts_msgs::TwistAccel>(
       "/cmd_vel_acc", 1, &robot_base_node::VelAccCB, this);
   ros_sub_chassis_cmd_ =
-      nh_.subscribe("/chassis", 1, &robot_base_node::ChassisCmdCB, this);
+      nh_.subscribe("/chassis/cmd", 1, &robot_base_node::ChassisCmdCB, this);
   if (robot_serial_->Init()) {
     ROS_INFO("serial initial success.");
   } else {
