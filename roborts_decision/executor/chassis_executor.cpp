@@ -15,7 +15,7 @@ ChassisExecutor::ChassisExecutor():execution_mode_(ExcutionMode::IDLE_MODE), exe
   ROS_INFO("Global planer server start!");
   local_planner_client_.waitForServer();
   ROS_INFO("Local planer server start!");
-  ChangeMode(NORMAL);
+  Execute(NORMAL);
 }
 
 void ChassisExecutor::Execute(const geometry_msgs::PoseStamped &goal){
@@ -44,7 +44,7 @@ void ChassisExecutor::Execute(const roborts_msgs::TwistAccel &twist_accel){
   cmd_vel_acc_pub_.publish(twist_accel);
 }
 
-void ChassisExecutor::ChangeMode(const CHASSISMOD _mode){
+void ChassisExecutor::Execute(const CHASSISMOD _mode){
   cmd_.mode = _mode;
   cmd_pub_.publish(cmd_);
 }

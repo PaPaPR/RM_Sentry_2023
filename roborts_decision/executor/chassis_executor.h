@@ -65,7 +65,7 @@ class ChassisExecutor{
   /**
    * @brief Update the current chassis spin mode
    */
-  void ChangeMode(const CHASSISMOD _mode);
+  void Execute(const CHASSISMOD _mode);
 
   /**
    * @brief Cancel the current task and deal with the mode transition
