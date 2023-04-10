@@ -5,8 +5,6 @@
 		<param name="map_init_x" type="double" value="1.0"/>
 		<param name="map_init_y" type="double" value="1.0"/>
 		<param name="map_init_yaw" type="double" value="0.0"/>
-		<param name="gimbal2chassis_x" type="double" value="-0.08"/>
-		<param name="gimbal2chassis_y" type="double" value="0.134"/>
 		
 	</node>
 

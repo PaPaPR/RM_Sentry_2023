@@ -10,6 +10,7 @@ robot_base_node::robot_base_node()
   update_map2odom_srv_ = nh_.advertiseService(
       "update_map2odom_service", &robot_base_node::UpdateMap2OdomTFSRV, this);
   InitTFS();
+  UpdateMap2OdomTF();
 
   std::string serial_port;
   std::string serial_baud;
@@ -103,6 +104,22 @@ void robot_base_node::InitTFS() {
   map_tf_.transform.rotation.y = 0.;
   map_tf_.transform.rotation.z = 0.;
   map_tf_.transform.rotation.w = 1.;
+
+  laser_lio_tfl_.transform.translation.x = 0.;
+  laser_lio_tfl_.transform.translation.y = 0.;
+  laser_lio_tfl_.transform.translation.z = 0.;
+  laser_lio_tfl_.transform.rotation.x = 0.;
+  laser_lio_tfl_.transform.rotation.y = 0.;
+  laser_lio_tfl_.transform.rotation.z = 0.;
+  laser_lio_tfl_.transform.rotation.w = 1.;
+  
+  odom_tfl_.transform.translation.x = 0.;
+  odom_tfl_.transform.translation.y = 0.;
+  odom_tfl_.transform.translation.z = 0.;
+  odom_tfl_.transform.rotation.x = 0.;
+  odom_tfl_.transform.rotation.y = 0.;
+  odom_tfl_.transform.rotation.z = 0.;
+  odom_tfl_.transform.rotation.w = 1.;
 }
 
 void robot_base_node::ChassisCmdCB(
@@ -172,11 +189,12 @@ void robot_base_node::UpdateVelLoop() {
   }
 }
 
+// To-do: 初始化后位置大概正确但有偏转
 void robot_base_node::UpdateMap2OdomTF() {
   map_tf_.transform.translation.x =
-      odom_tfl_.transform.translation.x - map_init_x_;
+      odom_tfl_.transform.translation.x + map_init_x_;
   map_tf_.transform.translation.y =
-      odom_tfl_.transform.translation.y - map_init_y_;
+      odom_tfl_.transform.translation.y + map_init_y_;
 
   tf2::Quaternion q_orig(
       odom_tfl_.transform.rotation.x, odom_tfl_.transform.rotation.y,
@@ -186,7 +204,7 @@ void robot_base_node::UpdateMap2OdomTF() {
   m_new.getRPY(roll, pitch, yaw);
 
   tf2::Quaternion q_new;
-  q_new.setRPY(0, 0, map_init_yaw_ - yaw);
+  q_new.setRPY(roll, pitch, map_init_yaw_ + yaw);
   q_new.normalize();
 
   map_tf_.transform.rotation.x = q_new.x();
@@ -208,7 +226,7 @@ void robot_base_node::ListenTF() {
         "laser_lio_odom", "gimbal_odom_center", ros::Time(0));
 
     odom_tfl_ =
-        tf_buffer_.lookupTransform("odom", "gimbal_odom_center", ros::Time(0));
+        tf_buffer_.lookupTransform("gimbal_link", "odom", ros::Time(0));
 
   } catch (tf2::TransformException &ex) {
     // ROS_WARN("%s", ex.what());
