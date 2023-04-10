@@ -207,7 +207,7 @@ void robot_base_node::UpdateMap2OdomTF() {
   m_new.getRPY(roll, pitch, yaw);
 
   tf2::Quaternion q_new;
-  q_new.setRPY(roll, pitch, map_init_yaw_ + yaw);
+  q_new.setRPY(0., 0., map_init_yaw_ + yaw);
   q_new.normalize();
 
   map_tf_.transform.rotation.x = q_new.x();
@@ -242,10 +242,25 @@ void robot_base_node::SendTF() {
   odom_tf_.transform.translation.y = laser_lio_tfl_.transform.translation.y;
   odom_tf_.transform.translation.z = 0.;
 
-  odom_tf_.transform.rotation.x = laser_lio_tfl_.transform.rotation.x;
-  odom_tf_.transform.rotation.y = laser_lio_tfl_.transform.rotation.y;
-  odom_tf_.transform.rotation.z = laser_lio_tfl_.transform.rotation.z;
-  odom_tf_.transform.rotation.w = laser_lio_tfl_.transform.rotation.w;
+  tf2::Quaternion q_orig(
+      laser_lio_tfl_.transform.rotation.x, laser_lio_tfl_.transform.rotation.y,
+      laser_lio_tfl_.transform.rotation.z, laser_lio_tfl_.transform.rotation.w);
+  tf2::Matrix3x3 m_new(q_orig);
+  double roll, pitch, yaw;
+  m_new.getRPY(roll, pitch, yaw);
+
+  tf2::Quaternion q_new;
+  q_new.setRPY(0., 0., yaw);
+  q_new.normalize();
+
+  // odom_tf_.transform.rotation.x = laser_lio_tfl_.transform.rotation.x;
+  // odom_tf_.transform.rotation.y = laser_lio_tfl_.transform.rotation.y;
+  // odom_tf_.transform.rotation.z = laser_lio_tfl_.transform.rotation.z;
+  // odom_tf_.transform.rotation.w = laser_lio_tfl_.transform.rotation.w;
+  odom_tf_.transform.rotation.x = q_new.getX();
+  odom_tf_.transform.rotation.y = q_new.getY();
+  odom_tf_.transform.rotation.z = q_new.getZ();
+  odom_tf_.transform.rotation.w = q_new.getW();
   odom_br_.sendTransform(odom_tf_);
 
   map_tf_.header.stamp = ros::Time::now();
