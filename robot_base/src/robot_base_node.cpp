@@ -58,7 +58,7 @@ robot_base_node::robot_base_node()
   });
 
   tf_thread_ = std::thread([this] {
-    ros::Rate rate(150.0);
+    ros::Rate rate(1000.0);
     while (ros::ok()) {
       SendTF();
       ListenTF();
@@ -67,7 +67,7 @@ robot_base_node::robot_base_node()
   });
 
   vel_update_thread_ = std::thread([this] {
-    ros::Rate rate(100.0);
+    ros::Rate rate(1000.0);
     while (ros::ok()) {
       UpdateVelLoop();
       rate.sleep();
