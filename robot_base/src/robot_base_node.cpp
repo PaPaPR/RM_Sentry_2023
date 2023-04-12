@@ -264,7 +264,7 @@ void robot_base_node::SendTF() {
   odom_br_.sendTransform(odom_tf_);
 
   map_tf_.header.stamp = ros::Time::now();
-  map2odom_br_.sendTransform(map_tf_);
+  map_br_.sendTransform(map_tf_);
 
   tf2::Quaternion q_gb;
   q_gb.setRPY(0, 0, base_link_yaw_rad_);

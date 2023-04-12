@@ -46,7 +46,7 @@ class robot_base_node {
   tf2_ros::TransformBroadcaster base_link_br_;
   geometry_msgs::TransformStamped base_link_tf_;
 
-  tf2_ros::StaticTransformBroadcaster map2odom_br_;
+  tf2_ros::StaticTransformBroadcaster map_br_;
   geometry_msgs::TransformStamped map_tf_;
 
   // 底盘运动速度计算以及前进方向确定
