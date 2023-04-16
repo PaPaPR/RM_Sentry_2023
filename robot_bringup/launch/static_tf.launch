@@ -15,5 +15,5 @@
           args="0.0 0.0 0.0  0.0 0.0 0.0 /gimbal_link /camera0" />
 
   <node pkg="tf2_ros" type="static_transform_publisher" name="laser_link_to_ydlidar_frame_broadcaster"
-    args="-0.07 0.12 0.0 2.35 0.0 0.0 /laser_link /ydlidar_frame" />
+    args="-0.07 0.12 0.0 2.29619449 0.0 0.0 /laser_link /ydlidar_frame" />
 </launch>
