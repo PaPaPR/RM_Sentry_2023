@@ -54,7 +54,7 @@ int RobotSerial::RecvCMD() {
       this->read((uint8_t *)&competition_ul_buf_, sizeof(competition_ul_buf_));
       if (competition_ul_buf_.end == (unsigned)'E') {
         std::lock_guard<std::mutex> lck(competition_inf_mtx_);
-        return INF_CHASSIS_GIMBAL;
+        return REFEREE_RMUL;
       }
     }
     default:
