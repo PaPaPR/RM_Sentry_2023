@@ -1,0 +1,7 @@
+scan_filter_chain:
+
+- name: ydlidar_angle
+  type: laser_filters/LaserScanAngularBoundsFilter
+  params:
+    lower_angle: -2.3561
+    upper_angle: 2
