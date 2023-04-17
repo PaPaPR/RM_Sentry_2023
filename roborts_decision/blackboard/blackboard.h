@@ -29,7 +29,16 @@
 #include "../proto/decision.pb.h"
 #include "costmap/costmap_interface.h"
 
+#include "robot_base/RefereeRMUL.h"
+#include "robot_base/AutoAimCmd.h"
+
 namespace roborts_decision{
+
+enum GameProgress {
+  WAIT,  // 开始前
+  INPROGRESS, // 进行中
+  END,  // 结束
+};
 
 class Blackboard {
  public:
@@ -56,21 +65,25 @@ class Blackboard {
 
     ros::NodeHandle nh;
 
+    referee_rmul_sub_ = nh.subscribe("referee", 1, &Blackboard::RefereeCB, this);
+    autoaim_enemy_detect_sub_ = nh.subscribe("cmd_autoaim", 1, &Blackboard::EnemyDetectCB, this);
+    autoaim_enemy_sub_ = nh.subscribe("enemy_autoaim", 1, &Blackboard::EnemyCB, this);
+
     roborts_decision::DecisionConfig decision_config;
     roborts_common::ReadProtoFromTextFile(proto_file_path, &decision_config);
 
-    if (!decision_config.simulate()){
+    // if (!decision_config.simulate()){
 
-      armor_detection_actionlib_client_.waitForServer();
+    //   armor_detection_actionlib_client_.waitForServer();
 
-      ROS_INFO("Armor detection module has been connected!");
+    //   ROS_INFO("Armor detection module has been connected!");
 
-      armor_detection_goal_.command = 1;
-      armor_detection_actionlib_client_.sendGoal(armor_detection_goal_,
-                                                 actionlib::SimpleActionClient<roborts_msgs::ArmorDetectionAction>::SimpleDoneCallback(),
-                                                 actionlib::SimpleActionClient<roborts_msgs::ArmorDetectionAction>::SimpleActiveCallback(),
-                                                 boost::bind(&Blackboard::ArmorDetectionFeedbackCallback, this, _1));
-    }
+    //   armor_detection_goal_.command = 1;
+    //   armor_detection_actionlib_client_.sendGoal(armor_detection_goal_,
+    //                                              actionlib::SimpleActionClient<roborts_msgs::ArmorDetectionAction>::SimpleDoneCallback(),
+    //                                              actionlib::SimpleActionClient<roborts_msgs::ArmorDetectionAction>::SimpleActiveCallback(),
+    //                                              boost::bind(&Blackboard::ArmorDetectionFeedbackCallback, this, _1));
+    // }
 
 
   }
@@ -122,13 +135,33 @@ class Blackboard {
 
   }
 
+  void RefereeCB(const robot_base::RefereeRMUL::ConstPtr& _msg) {
+    game_progress_ = _msg->game_progress;
+    game_progress_remain_ = _msg->game_progress_remain;
+    robot_id_ = _msg->robot_id;
+    bullet_remain_ = _msg->bullet_remain;
+    sentry_hp_ = _msg->sentry_hp;
+  }
+
+  void EnemyCB(const geometry_msgs::PoseStamped::ConstPtr& _msg) {
+    enemy_pose_ = *_msg;
+  }
+
+  void EnemyDetectCB(const robot_base::AutoAimCmd::ConstPtr& _msg) {
+    enemy_detected_ = _msg->armor_detected;
+  }
+
   geometry_msgs::PoseStamped GetEnemy() const {
     return enemy_pose_;
   }
 
   bool IsEnemyDetected() const{
-    ROS_INFO("%s: %d", __FUNCTION__, (int)enemy_detected_);
-    return enemy_detected_;
+    // ROS_INFO("%s: %d", __FUNCTION__, (int)enemy_detected_);
+    if((ros::Time::now() - enemy_pose_.header.stamp) < ros::Duration(1)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   // Goal
@@ -149,6 +182,66 @@ class Blackboard {
       return false;
     }
   }
+
+  // 比赛开始信号
+  bool IsGameFirstStart() {
+    static int last_game_progress {0};
+    if (game_progress_ == 4 && last_game_progress < 4){
+      game_start_time_ = ros::Time::now();
+      return true;
+    }
+    last_game_progress = game_progress_;
+    return false;
+  }
+
+  int GetHP() {
+    return sentry_hp_;
+  }
+
+  GameProgress GetGameProgress() {
+    if(game_progress_ < 4) {
+      return WAIT;
+    } else if(game_progress_ == 4){
+      return INPROGRESS;
+    } else if(game_progress_ == 5){
+      return END;
+    }
+  }
+
+  // game_progress_remain_ 为裁判系统数据，五分钟比赛，计时方式：30s-0s + 250s-0s
+  int GetGameRemain() {
+    auto remain_dur = ros::Time::now() - game_start_time_;
+    auto remain_time = static_cast<int>(remain_dur.toSec());
+    return remain_time;
+    // return game_progress_remain_;
+  }
+
+  int GetBulletRemain() {
+    return bullet_remain_;
+  }
+
+  // 判断是否受到攻击
+  // previous 为一秒前数据，last 为两秒前数据。
+  bool IsUnderHitting() {
+    static auto last_time = ros::Time::now();
+    static int last_hp = sentry_hp_;
+    static auto previous_time = ros::Time::now();
+    static int previous_hp = sentry_hp_;
+    if(last_hp - sentry_hp_ > 20) {
+      return true;
+    } else {
+      return false;
+    }
+    if(ros::Time::now() - last_time > ros::Duration(2)) {
+      last_time = previous_time;
+      last_hp = previous_hp;
+    }
+    if(ros::Time::now() - previous_time > ros::Duration(1)) {
+      previous_time = ros::Time::now();
+      previous_hp = sentry_hp_;
+    }
+  }
+
   /*---------------------------------- Tools ------------------------------------------*/
 
   double GetDistance(const geometry_msgs::PoseStamped &pose1,
@@ -215,9 +308,12 @@ class Blackboard {
 
   //! Enemy info
   actionlib::SimpleActionClient<roborts_msgs::ArmorDetectionAction> armor_detection_actionlib_client_;
+  ros::Subscriber autoaim_cmd_sub_;
+  float gimbal_cmd_yaw;
+  float gimbal_cmd_pitch;
   roborts_msgs::ArmorDetectionGoal armor_detection_goal_;
   geometry_msgs::PoseStamped enemy_pose_;
-  bool enemy_detected_;
+  bool enemy_detected_;  // 自瞄原始数据，波动较大
 
   //! cost map
   std::shared_ptr<CostMap> costmap_ptr_;
@@ -227,6 +323,18 @@ class Blackboard {
   //! robot map pose
   geometry_msgs::PoseStamped robot_map_pose_;
 
+  // Game info
+  ros::Subscriber referee_rmul_sub_;
+  ros::Subscriber autoaim_enemy_sub_;
+  ros::Subscriber autoaim_enemy_detect_sub_;
+  ros::Time game_start_time_;
+  // 裁判系统数据
+  uint8_t game_progress_; // 比赛阶段
+  uint8_t game_progress_remain_; 
+  uint8_t robot_id_;
+  uint16_t sentry_hp_;
+  uint16_t bullet_remain_;
+  
 };
 } //namespace roborts_decision
 #endif //ROBORTS_DECISION_BLACKBOARD_H

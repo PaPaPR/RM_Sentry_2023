@@ -243,6 +243,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::roborts_decision::DecisionConfig, search_region_2_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::roborts_decision::DecisionConfig, search_region_3_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::roborts_decision::DecisionConfig, search_region_4_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::roborts_decision::DecisionConfig, search_region_5_),
   ~0u,
   6,
   7,
@@ -257,6 +258,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,
   ~0u,
   ~0u,
+  ~0u,
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 11, sizeof(::roborts_decision::Point)},
@@ -264,7 +266,7 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 36, 43, sizeof(::roborts_decision::SearchConstraint)},
   { 45, 53, sizeof(::roborts_decision::WhirlVel)},
   { 56, 62, sizeof(::roborts_decision::MultiRobot)},
-  { 63, 82, sizeof(::roborts_decision::DecisionConfig)},
+  { 63, 83, sizeof(::roborts_decision::DecisionConfig)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -309,7 +311,7 @@ void AddDescriptorsImpl() {
       "limit\030\002 \001(\002\"I\n\010WhirlVel\022\023\n\013angle_x_vel\030\001"
       " \001(\002\022\023\n\013angle_y_vel\030\002 \001(\002\022\023\n\013angle_z_vel"
       "\030\003 \001(\002\"=\n\nMultiRobot\022/\n\016start_position\030\007"
-      " \001(\0132\027.roborts_decision.Point\"\222\005\n\016Decisi"
+      " \001(\0132\027.roborts_decision.Point\"\304\005\n\016Decisi"
       "onConfig\022&\n\005point\030\001 \003(\0132\027.roborts_decisi"
       "on.Point\022\027\n\010simulate\030\002 \001(\010:\005false\022\025\n\006mas"
       "ter\030\003 \001(\010:\005false\0222\n\006escape\030\004 \001(\0132\".robor"
@@ -326,10 +328,11 @@ void AddDescriptorsImpl() {
       "\014 \003(\0132\027.roborts_decision.Point\0220\n\017search"
       "_region_3\030\r \003(\0132\027.roborts_decision.Point"
       "\0220\n\017search_region_4\030\016 \003(\0132\027.roborts_deci"
-      "sion.Point"
+      "sion.Point\0220\n\017search_region_5\030\017 \003(\0132\027.ro"
+      "borts_decision.Point"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1170);
+      descriptor, 1220);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "decision.proto", &protobuf_RegisterTypes);
 }
@@ -2058,6 +2061,7 @@ const int DecisionConfig::kSearchRegion1FieldNumber;
 const int DecisionConfig::kSearchRegion2FieldNumber;
 const int DecisionConfig::kSearchRegion3FieldNumber;
 const int DecisionConfig::kSearchRegion4FieldNumber;
+const int DecisionConfig::kSearchRegion5FieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 DecisionConfig::DecisionConfig()
@@ -2076,7 +2080,8 @@ DecisionConfig::DecisionConfig(const DecisionConfig& from)
       search_region_1_(from.search_region_1_),
       search_region_2_(from.search_region_2_),
       search_region_3_(from.search_region_3_),
-      search_region_4_(from.search_region_4_) {
+      search_region_4_(from.search_region_4_),
+      search_region_5_(from.search_region_5_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_escape()) {
     escape_ = new ::roborts_decision::EscapeConstraint(*from.escape_);
@@ -2160,6 +2165,7 @@ void DecisionConfig::Clear() {
   search_region_2_.Clear();
   search_region_3_.Clear();
   search_region_4_.Clear();
+  search_region_5_.Clear();
   cached_has_bits = _has_bits_[0];
   if (cached_has_bits & 63u) {
     if (cached_has_bits & 0x00000001u) {
@@ -2376,6 +2382,18 @@ bool DecisionConfig::MergePartialFromCodedStream(
         break;
       }
 
+      // repeated .roborts_decision.Point search_region_5 = 15;
+      case 15: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(122u /* 122 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+                input, add_search_region_5()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -2503,6 +2521,15 @@ void DecisionConfig::SerializeWithCachedSizes(
       output);
   }
 
+  // repeated .roborts_decision.Point search_region_5 = 15;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->search_region_5_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      15,
+      this->search_region_5(static_cast<int>(i)),
+      output);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         _internal_metadata_.unknown_fields(), output);
@@ -2618,6 +2645,14 @@ void DecisionConfig::SerializeWithCachedSizes(
         14, this->search_region_4(static_cast<int>(i)), deterministic, target);
   }
 
+  // repeated .roborts_decision.Point search_region_5 = 15;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->search_region_5_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        15, this->search_region_5(static_cast<int>(i)), deterministic, target);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target);
@@ -2698,6 +2733,17 @@ size_t DecisionConfig::ByteSizeLong() const {
       total_size +=
         ::google::protobuf::internal::WireFormatLite::MessageSize(
           this->search_region_4(static_cast<int>(i)));
+    }
+  }
+
+  // repeated .roborts_decision.Point search_region_5 = 15;
+  {
+    unsigned int count = static_cast<unsigned int>(this->search_region_5_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->search_region_5(static_cast<int>(i)));
     }
   }
 
@@ -2788,6 +2834,7 @@ void DecisionConfig::MergeFrom(const DecisionConfig& from) {
   search_region_2_.MergeFrom(from.search_region_2_);
   search_region_3_.MergeFrom(from.search_region_3_);
   search_region_4_.MergeFrom(from.search_region_4_);
+  search_region_5_.MergeFrom(from.search_region_5_);
   cached_has_bits = from._has_bits_[0];
   if (cached_has_bits & 255u) {
     if (cached_has_bits & 0x00000001u) {
@@ -2848,6 +2895,7 @@ void DecisionConfig::InternalSwap(DecisionConfig* other) {
   CastToBase(&search_region_2_)->InternalSwap(CastToBase(&other->search_region_2_));
   CastToBase(&search_region_3_)->InternalSwap(CastToBase(&other->search_region_3_));
   CastToBase(&search_region_4_)->InternalSwap(CastToBase(&other->search_region_4_));
+  CastToBase(&search_region_5_)->InternalSwap(CastToBase(&other->search_region_5_));
   swap(escape_, other->escape_);
   swap(search_limit_, other->search_limit_);
   swap(whirl_vel_, other->whirl_vel_);

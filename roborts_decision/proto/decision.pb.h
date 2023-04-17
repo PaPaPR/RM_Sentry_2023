@@ -960,6 +960,18 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
   const ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point >&
       search_region_4() const;
 
+  // repeated .roborts_decision.Point search_region_5 = 15;
+  int search_region_5_size() const;
+  void clear_search_region_5();
+  static const int kSearchRegion5FieldNumber = 15;
+  ::roborts_decision::Point* mutable_search_region_5(int index);
+  ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point >*
+      mutable_search_region_5();
+  const ::roborts_decision::Point& search_region_5(int index) const;
+  ::roborts_decision::Point* add_search_region_5();
+  const ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point >&
+      search_region_5() const;
+
   // optional .roborts_decision.EscapeConstraint escape = 4;
   bool has_escape() const;
   void clear_escape();
@@ -1074,6 +1086,7 @@ class DecisionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point > search_region_2_;
   ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point > search_region_3_;
   ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point > search_region_4_;
+  ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point > search_region_5_;
   ::roborts_decision::EscapeConstraint* escape_;
   ::roborts_decision::SearchConstraint* search_limit_;
   ::roborts_decision::WhirlVel* whirl_vel_;
@@ -2179,6 +2192,36 @@ inline const ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point >&
 DecisionConfig::search_region_4() const {
   // @@protoc_insertion_point(field_list:roborts_decision.DecisionConfig.search_region_4)
   return search_region_4_;
+}
+
+// repeated .roborts_decision.Point search_region_5 = 15;
+inline int DecisionConfig::search_region_5_size() const {
+  return search_region_5_.size();
+}
+inline void DecisionConfig::clear_search_region_5() {
+  search_region_5_.Clear();
+}
+inline ::roborts_decision::Point* DecisionConfig::mutable_search_region_5(int index) {
+  // @@protoc_insertion_point(field_mutable:roborts_decision.DecisionConfig.search_region_5)
+  return search_region_5_.Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point >*
+DecisionConfig::mutable_search_region_5() {
+  // @@protoc_insertion_point(field_mutable_list:roborts_decision.DecisionConfig.search_region_5)
+  return &search_region_5_;
+}
+inline const ::roborts_decision::Point& DecisionConfig::search_region_5(int index) const {
+  // @@protoc_insertion_point(field_get:roborts_decision.DecisionConfig.search_region_5)
+  return search_region_5_.Get(index);
+}
+inline ::roborts_decision::Point* DecisionConfig::add_search_region_5() {
+  // @@protoc_insertion_point(field_add:roborts_decision.DecisionConfig.search_region_5)
+  return search_region_5_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::roborts_decision::Point >&
+DecisionConfig::search_region_5() const {
+  // @@protoc_insertion_point(field_list:roborts_decision.DecisionConfig.search_region_5)
+  return search_region_5_;
 }
 
 #ifdef __GNUC__

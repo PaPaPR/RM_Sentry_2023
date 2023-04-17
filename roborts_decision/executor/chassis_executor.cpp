@@ -10,7 +10,7 @@ ChassisExecutor::ChassisExecutor():execution_mode_(ExcutionMode::IDLE_MODE), exe
   ros::NodeHandle nh;
   cmd_vel_acc_pub_ = nh.advertise<roborts_msgs::TwistAccel>("cmd_vel_acc", 100);
   cmd_vel_pub_     = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1);
-  cmd_pub_     = nh.advertise<robot_base::ChassisCmd>("chassis/cmd", 1);
+  cmd_pub_     = nh.advertise<robot_base::ChassisCmd>("cmd_chassis", 1);
   global_planner_client_.waitForServer();
   ROS_INFO("Global planer server start!");
   local_planner_client_.waitForServer();
