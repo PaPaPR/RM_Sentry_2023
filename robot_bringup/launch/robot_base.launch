@@ -1,16 +1,34 @@
 <launch>
     <include file="$(find robot_bringup)/launch/static_tf.launch"/>
 
-	<node pkg="robot_base" type="robot_base_node" name="robot_base_node" output="screen">
-		<param name="map_init_x" type="double" value="1.0"/>
-		<param name="map_init_y" type="double" value="1.0"/>
-		<param name="map_init_yaw" type="double" value="0.0"/>
+	<node pkg="robot_base" type="robot_base_node" name="robot_base_node" output="screen" respawn="true">
+		<param name="debug" type="bool" value="true"/>
+		<param name="no_referee" type="bool" value="false"/>
+		<param name="no_serial" type="bool" value="false"/>
+		<param name="no_autoaim_shoot" type="bool" value="false"/>
+		<param name="no_move" type="bool" value="false"/>
+
+		<param name="map_init_yaw" type="double" value="0.0"/> <!-- 废弃 -->
+
+		<!-- b4 -->
+		<param name="map_init_x" type="double" value="2.0"/>
+		<param name="map_init_y" type="double" value="2.44"/>
+
+		<!-- test -->
+		<!-- <param name="map_init_x" type="double" value="0.0"/>
+		<param name="map_init_y" type="double" value="0.0"/> 
+		<param name="map_init_yaw" type="double" value="0.0"/>-->
+
+		<!-- rmul -->
+		<!-- <param name="map_init_x" type="double" value="3.04"/>
+		<param name="map_init_y" type="double" value="8.94"/> -->
 		
 	</node>
 
-	    <!-- <arg name="map_yaml_file" default="$(find robot_bringup)/map/b3-4.yaml" /> -->
-    <arg name="map_yaml_file" default="$(find robot_bringup)/map/icra2019.yaml" />
-
+	<!-- <arg name="map_yaml_file" default="$(find robot_bringup)/map/b4.yaml" /> -->
+	<arg name="map_yaml_file" default="$(find robot_bringup)/map/b4_rot_no_fend.yaml" />
+	<!-- <arg name="map_yaml_file" default="$(find robot_bringup)/map/icra2019.yaml" /> -->
+	<!-- <arg name="map_yaml_file" default="$(find robot_bringup)/map/rmul_map.yaml" /> -->
     <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_yaml_file)" />
 
 </launch>

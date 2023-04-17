@@ -1,11 +1,13 @@
 <launch>
   <!-- Run the global planner node -->
-  <node pkg="roborts_planning" type="global_planner_node" name="global_planner_node" respawn="false"  output="screen"/>
+  <node pkg="roborts_planning" type="global_planner_node" name="global_planner_node" respawn="true"  output="screen"/>
 
   <!-- Run the local planner node -->
-  <node pkg="roborts_planning" type="local_planner_node" name="local_planner_node" respawn="false"  output="screen"/>
+  <node pkg="roborts_planning" type="local_planner_node" name="local_planner_node" respawn="true"  output="screen"/>
 
-  <node pkg="roborts_decision" type="behavior_test_node" name="behavior_test_node" respawn="false"  output="screen"/>
+  <node pkg="roborts_decision" type="behavior_test_node" name="behavior_test_node" respawn="true"  output="screen"/>
+
+  <!-- <node pkg="roborts_decision" type="behavior_node" name="behavior_node" respawn="true"  output="screen"/> -->
 
   <!-- <node pkg="roborts_planning" type="vel_converter" name="vel_converter" respawn="false"/> -->
 
