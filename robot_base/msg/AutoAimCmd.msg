@@ -1,0 +1,2 @@
+bool auto_shoot
+bool armor_detected

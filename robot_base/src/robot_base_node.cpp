@@ -3,33 +3,57 @@
 robot_base_node::robot_base_node()
     : timeout_dur_(ros::Duration(0.5)), tf_listener_(tf_buffer_) {
   ros::NodeHandle nhp("~");
+  nhp.param<bool>("debug", debug_, false);
+  nhp.param<bool>("no_referee", no_referee_, false);
+  nhp.param<bool>("no_serial", no_serial_, false);
+  nhp.param<bool>("no_autoaim_shoot", no_autoaim_shoot_, false);
+  nhp.param<bool>("no_move", no_move_, false);
   nhp.param<double>("map_init_x", map_init_x_, 0.);
   nhp.param<double>("map_init_y", map_init_y_, 0.);
   nhp.param<double>("map_init_yaw", map_init_yaw_, 0.0);
 
-  update_map2odom_srv_ = nh_.advertiseService(
-      "update_map2odom_service", &robot_base_node::UpdateMap2OdomTFSRV, this);
+  update_map_srv_ = nh_.advertiseService(
+      "update_map", &robot_base_node::UpdateMapTFSRV, this);
   InitTFS();
-  UpdateMap2OdomTF();
+  UpdateMapTF();
+  
+
+  if(debug_) {
+    debug_pub_ = nh_.advertise<robot_base::ChassisDebug>("/debug_chassis", 1);
+  }
 
   std::string serial_port;
   std::string serial_baud;
-  nhp.param<std::string>("serial_port", serial_port, "/dev/ttyUSB0");
+  nhp.param<std::string>("serial_port", serial_port, "/dev/serial");
   nhp.param<std::string>("serial_baud", serial_baud, "500000");
-  robot_serial_ =
-      std::make_shared<RobotSerial>(serial_port, std::stoul(serial_baud));
+
+  if(!no_serial_) {
+    robot_serial_ =
+        std::make_shared<RobotSerial>(serial_port, std::stoul(serial_baud));
+
+    if (robot_serial_->Init()) {
+      ROS_INFO("serial initial success.");
+    } else {
+      ROS_WARN("serial initial failed.");
+    }
+  }
+
   vel_acc_sub_ = nh_.subscribe<roborts_msgs::TwistAccel>(
       "/cmd_vel_acc", 1, &robot_base_node::VelAccCB, this);
   ros_sub_chassis_cmd_ =
-      nh_.subscribe("/chassis/cmd", 1, &robot_base_node::ChassisCmdCB, this);
-  if (robot_serial_->Init()) {
-    ROS_INFO("serial initial success.");
-  } else {
-    ROS_WARN("serial initial failed.");
-  }
+      nh_.subscribe("/cmd_chassis", 1, &robot_base_node::ChassisCmdCB, this);
+  gimbal_rate_sub_ =
+      nh_.subscribe("/cmd_gimbal_rate", 1, &robot_base_node::GimbalRateCmdCB, this);
+  autoaim_cmd_sub =
+      nh_.subscribe("/cmd_autoaim", 1, &robot_base_node::AutoAimCmdCB, this);
+  laser_sub =
+      nh_.subscribe("/scan", 1, &robot_base_node::LaserDynamicTFCB, this);
 
+  gimbal_angle_pub = nh_.advertise<roborts_msgs::GimbalAngle>("/inf_gimbal_angle", 1);
   referee_rmul_pub_ = nh_.advertise<robot_base::RefereeRMUL>("/referee", 1);
+  autoaim_inf_pub_ = nh_.advertise<robot_base::AutoAimInf>("/inf_autoaim", 1);
 
+  if(!no_serial_) {
   serial_send_thread_ = std::thread([this] {
     while (ros::ok()) {
       if (!robot_serial_->SendCMD()) ROS_WARN("serial send failed.");
@@ -56,6 +80,7 @@ robot_base_node::robot_base_node()
       }
     }
   });
+  }
 
   tf_thread_ = std::thread([this] {
     ros::Rate rate(1000.0);
@@ -75,7 +100,7 @@ robot_base_node::robot_base_node()
   });
 }
 
-robot_base_node::~robot_base_node() { robot_serial_->close(); }
+robot_base_node::~robot_base_node() { }
 
 void robot_base_node::InitTFS() {
   odom_tf_.header.frame_id = "odom";
@@ -108,6 +133,16 @@ void robot_base_node::InitTFS() {
   map_tf_.transform.rotation.z = 0.;
   map_tf_.transform.rotation.w = 1.;
 
+  laser_link_tf_.header.frame_id = "map";
+  laser_link_tf_.child_frame_id = "laser_link";
+  laser_link_tf_.transform.translation.x = 0.;
+  laser_link_tf_.transform.translation.y = 0.;
+  laser_link_tf_.transform.translation.z = 0.;
+  laser_link_tf_.transform.rotation.x = 0.;
+  laser_link_tf_.transform.rotation.y = 0.;
+  laser_link_tf_.transform.rotation.z = 0.;
+  laser_link_tf_.transform.rotation.w = 1.;
+
   laser_lio_tfl_.transform.translation.x = 0.;
   laser_lio_tfl_.transform.translation.y = 0.;
   laser_lio_tfl_.transform.translation.z = 0.;
@@ -125,12 +160,32 @@ void robot_base_node::InitTFS() {
   odom_tfl_.transform.rotation.w = 1.;
 }
 
+void robot_base_node::GimbalRateCmdCB(
+    const roborts_msgs::GimbalRate::ConstPtr &_cmd) {
+  cmd_.yaw = _cmd->yaw_rate;
+  cmd_.pitch = _cmd->pitch_rate;
+  robot_serial_->GimbalCMD(cmd_);
+}
+
+void robot_base_node::AutoAimCmdCB(const robot_base::AutoAimCmd &_cmd) {
+  cmd_.auto_fire = _cmd.auto_shoot;
+  if(no_autoaim_shoot_) {
+    cmd_.auto_fire = false;
+  }
+  robot_serial_->GimbalCMD(cmd_);
+}
+
 void robot_base_node::ChassisCmdCB(
     const robot_base::ChassisCmd::ConstPtr &_cmd) {
   robot_serial_->ChassisModeSet(_cmd->mode);
 }
 
-void robot_base_node::ChassisGimbalCB(const INFChassisGimbalBuf &robot_inf) {}
+void robot_base_node::ChassisGimbalCB(const INFChassisGimbalBuf &robot_inf) {
+  roborts_msgs::GimbalAngle gimbal_angle;
+  gimbal_angle.pitch_angle = robot_inf.gimbal_pitch;
+  gimbal_angle.yaw_angle = robot_inf.gimbal_yaw;
+  gimbal_angle_pub.publish(gimbal_angle);
+}
 
 void robot_base_node::VelAccCB(const roborts_msgs::TwistAccel::ConstPtr &msg) {
   if (vel_acc_first_cb_) vel_acc_first_cb_ = false;
@@ -140,6 +195,8 @@ void robot_base_node::VelAccCB(const roborts_msgs::TwistAccel::ConstPtr &msg) {
   time_begin_acc_ = std::chrono::high_resolution_clock::now();
   time_begin_ = std::chrono::high_resolution_clock::now();
 }
+
+const double pi_double = 3.14159265358979323846 * 2;
 
 void robot_base_node::UpdateVelLoop() {
   if (!vel_acc_first_cb_) {
@@ -154,8 +211,8 @@ void robot_base_node::UpdateVelLoop() {
       base_link_yaw_rad_ +=
           (cmd_vel_.angular.z * actual_time +
            0.5 * vel_acc_.accel.angular.z * actual_time * actual_time);
-      while (base_link_yaw_rad_ > 360.) base_link_yaw_rad_ -= 360.;
-      while (base_link_yaw_rad_ < -360.) base_link_yaw_rad_ += 360.;
+      while (base_link_yaw_rad_ > pi_double) base_link_yaw_rad_ -= pi_double;
+      while (base_link_yaw_rad_ < -pi_double) base_link_yaw_rad_ += pi_double;
       double yaw = base_link_yaw_rad_ * 180. / 3.14159265358979323846;
 
       CHASSISCMD cmd;
@@ -163,7 +220,17 @@ void robot_base_node::UpdateVelLoop() {
       cmd.ly = cmd_vel_.linear.y;
       cmd.az = cmd_vel_.angular.z;
       cmd.forward = yaw;
-      robot_serial_->ChassisCMD(cmd);
+      if(!no_move_) {
+        robot_serial_->ChassisCMD(cmd);
+      }
+      if(debug_) {
+        robot_base::ChassisDebug inf;
+        inf.vx = cmd_vel_.linear.x;
+        inf.vy = cmd_vel_.linear.y;
+        inf.az = cmd_vel_.angular.z;
+        inf.gimbal_forw = yaw;
+        debug_pub_.publish(inf);
+      }
     } else {
       auto actual_time =
           std::chrono::duration<double, std::ratio<1, 1>>(
@@ -178,8 +245,8 @@ void robot_base_node::UpdateVelLoop() {
       cmd_vel_.angular.z =
           cmd_vel_.angular.z + actual_time * vel_acc_.accel.angular.z;
       base_link_yaw_rad_ += (cmd_vel_.angular.z * actual_time);
-      while (base_link_yaw_rad_ > 360.) base_link_yaw_rad_ -= 360.;
-      while (base_link_yaw_rad_ < -360.) base_link_yaw_rad_ += 360.;
+      while (base_link_yaw_rad_ > pi_double) base_link_yaw_rad_ -= pi_double;
+      while (base_link_yaw_rad_ < -pi_double) base_link_yaw_rad_ += pi_double;
       double yaw = base_link_yaw_rad_ * 180. / 3.14159265358979323846;
 
       CHASSISCMD cmd;
@@ -187,13 +254,23 @@ void robot_base_node::UpdateVelLoop() {
       cmd.ly = cmd_vel_.linear.y;
       cmd.az = cmd_vel_.angular.z;
       cmd.forward = yaw;
-      robot_serial_->ChassisCMD(cmd);
+      if(!no_move_) {
+        robot_serial_->ChassisCMD(cmd);
+      }
+      if(debug_) {
+        robot_base::ChassisDebug inf;
+        inf.vx = cmd_vel_.linear.x;
+        inf.vy = cmd_vel_.linear.y;
+        inf.az = cmd_vel_.angular.z;
+        inf.gimbal_forw = yaw;
+        debug_pub_.publish(inf);
+      }
     }
   }
 }
 
 // To-do: 初始化后位置大概正确但有偏转
-void robot_base_node::UpdateMap2OdomTF() {
+void robot_base_node::UpdateMapTF() {
   map_tf_.transform.translation.x =
       odom_tfl_.transform.translation.x + map_init_x_;
   map_tf_.transform.translation.y =
@@ -216,10 +293,10 @@ void robot_base_node::UpdateMap2OdomTF() {
   map_tf_.transform.rotation.w = q_new.w();
 }
 
-bool robot_base_node::UpdateMap2OdomTFSRV(
-    robot_base::UpdateMap2Odom::Request &req,
-    robot_base::UpdateMap2Odom::Response &res) {
-  UpdateMap2OdomTF();
+bool robot_base_node::UpdateMapTFSRV(
+    robot_base::UpdateMapTF::Request &req,
+    robot_base::UpdateMapTF::Response &res) {
+  UpdateMapTF();
   return true;
 }
 
@@ -231,6 +308,8 @@ void robot_base_node::ListenTF() {
     odom_tfl_ =
         tf_buffer_.lookupTransform("gimbal_link", "odom", ros::Time(0));
 
+    map2gimbal_link_tfl_ =
+        tf_buffer_.lookupTransform("map", "gimbal_link", ros::Time(0));
   } catch (tf2::TransformException &ex) {
     // ROS_WARN("%s", ex.what());
   }
@@ -284,8 +363,24 @@ void robot_base_node::RefereeRMULCB(const RefereeRMULBuf &_referee) {
   referee.game_progress_remain = _referee.game_progress_remain;
   referee.robot_id = _referee.robot_id;
   referee.sentry_hp = _referee.sentry_hp;
+  referee.bullet_remain = _referee.bullet_remain;
 
-  referee_rmul_pub_.publish(referee);
+  if(!no_referee_) {
+    referee_rmul_pub_.publish(referee);
+  }
+}
+
+void robot_base_node::LaserDynamicTFCB(const sensor_msgs::LaserScan::ConstPtr& msg) {
+  // 读取 map 到 base link ，发布 map 到 laser link
+  laser_link_tf_.header.stamp = ros::Time::now();
+  laser_link_tf_.transform.translation.x = map2gimbal_link_tfl_.transform.translation.x;
+  laser_link_tf_.transform.translation.y = map2gimbal_link_tfl_.transform.translation.y;
+  laser_link_tf_.transform.translation.z = map2gimbal_link_tfl_.transform.translation.z;
+  laser_link_tf_.transform.rotation.x = map2gimbal_link_tfl_.transform.rotation.x;
+  laser_link_tf_.transform.rotation.y = map2gimbal_link_tfl_.transform.rotation.y;
+  laser_link_tf_.transform.rotation.z = map2gimbal_link_tfl_.transform.rotation.z;
+  laser_link_tf_.transform.rotation.w = map2gimbal_link_tfl_.transform.rotation.w;
+  laser_link_br_.sendTransform(laser_link_tf_);
 }
 
 int main(int argc, char **argv) {

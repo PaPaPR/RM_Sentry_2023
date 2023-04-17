@@ -17,10 +17,7 @@ struct CMDRobotBuff {
 #define INF_CHASSIS_GIMBAL (unsigned)'A'
 struct INFChassisGimbalBuf {
   float gimbal_yaw = 0.f;         // 云台 yaw 角度
-  float gimbal_yaw_speed = 0.f;   // 云台 yaw 速度
   float gimbal_pitch = 0.f;       // 云台 pitch 角度
-  float gimbal_to_forward = 0.f;  // 云台相对于前进方向的角度
-  float forward_to_start = 0.f;   // 前进方向相对于启动朝向的角度
   uint8_t end;
 } __attribute__((packed));
 
@@ -30,7 +27,9 @@ struct RefereeRMULBuf {
   uint8_t game_progress{0};         // 比赛阶段
   uint8_t game_progress_remain{0};  // 该比赛阶段剩余时间
   uint8_t robot_id{7};
+  uint8_t armor_hited_plate_id{0};
   uint16_t sentry_hp{600};
+  uint16_t bullet_remain{750};
   uint8_t end;
 } __attribute__((packed));
 

@@ -55,7 +55,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 add_message_files(
   FILES
+  AutoAimCmd.msg
+  AutoAimInf.msg
   ChassisCmd.msg
+  ChassisDebug.msg
   RefereeRMUL.msg
 )
 
@@ -64,7 +67,7 @@ add_service_files(
   FILES
   # Service1.srv
   # Service2.srv
-  UpdateMap2Odom.srv
+  UpdateMapTF.srv
 )
 
 ## Generate actions in the 'action' folder
