@@ -1,0 +1,12 @@
+scan_filter_chain:
+
+- name: ydlidar_angle
+  type: laser_filters/LaserScanAngularBoundsFilter
+  params:
+    lower_angle: -2.3561
+    upper_angle: 1.570796327
+
+- name: footprint_filter
+  type: laser_filters/LaserScanFootprintFilter
+  params:
+    inscribed_radius: 0.2
