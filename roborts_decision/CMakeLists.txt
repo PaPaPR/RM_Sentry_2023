@@ -62,6 +62,7 @@ add_executable(behavior_node
   ${DecisionProtoHds}
   ${DecisionProtoSrc}
   behavior/chase_behavior.h
+  behavior/recover_behavior.h
   behavior/search_behavior.h
   behavior_tree.cpp
   executor/chassis_executor.cpp

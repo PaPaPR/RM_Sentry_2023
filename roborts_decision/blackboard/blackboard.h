@@ -137,7 +137,17 @@ class Blackboard {
 
   void RefereeCB(const robot_base::RefereeRMUL::ConstPtr& _msg) {
     game_progress_ = _msg->game_progress;
-    game_progress_remain_ = _msg->game_progress_remain;
+
+    if(time_cycle_ && _msg->game_progress == 4) {
+      game_progress_remain_ = _msg->game_progress_remain + 255;
+    } else {
+      game_progress_remain_ = _msg->game_progress_remain;
+    }
+
+    if(_msg->game_progress_remain == 0 && _msg->game_progress == 4) {
+      time_cycle_ = false;
+    }
+
     robot_id_ = _msg->robot_id;
     bullet_remain_ = _msg->bullet_remain;
     sentry_hp_ = _msg->sentry_hp;
@@ -187,6 +197,10 @@ class Blackboard {
   bool IsGameFirstStart() {
     static int last_game_progress {0};
     if (game_progress_ == 4 && last_game_progress < 4){
+      last_game_progress = game_progress_;
+      time_cycle_ = true;
+      std::cout << "time_cycle_" << time_cycle_ << std::endl;
+      std::cout << "game_progress_" << game_progress_ << std::endl;
       game_start_time_ = ros::Time::now();
       return true;
     }
@@ -210,10 +224,12 @@ class Blackboard {
 
   // game_progress_remain_ 为裁判系统数据，五分钟比赛，计时方式：30s-0s + 250s-0s
   int GetGameRemain() {
-    auto remain_dur = ros::Time::now() - game_start_time_;
-    auto remain_time = static_cast<int>(remain_dur.toSec());
-    return remain_time;
-    // return game_progress_remain_;
+    // auto remain_dur = ros::Time::now() - game_start_time_;
+    // auto game_start_time_sec= game_start_time_.toSec();
+    // auto nowsec= ros::Time::now().toSec(); // 此时间为正计时
+    // auto remain_time = static_cast<int>(remain_dur.toSec());
+    // return remain_time;
+    return game_progress_remain_;
   }
 
   int GetBulletRemain() {
@@ -330,10 +346,12 @@ class Blackboard {
   ros::Time game_start_time_;
   // 裁判系统数据
   uint8_t game_progress_; // 比赛阶段
-  uint8_t game_progress_remain_; 
+  uint16_t game_progress_remain_; 
   uint8_t robot_id_;
   uint16_t sentry_hp_;
   uint16_t bullet_remain_;
+
+  bool time_cycle_{true}; // 裁判系统时间循环标志位，true 则为比赛开始前30秒阶段
   
 };
 } //namespace roborts_decision

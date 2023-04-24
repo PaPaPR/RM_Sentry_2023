@@ -74,6 +74,13 @@ class SearchBehavior {
       }
       break;
     }
+    case 5:{
+      if(curent_region_ != &search_region_5_) {
+        region_iter_ = search_region_5_.begin();
+        curent_region_ = &search_region_5_;
+      }
+      break;
+    }
     default:
       break;
     }

@@ -110,18 +110,22 @@ class ChaseBehavior {
                                                  goal_y);
         }
       }
-      std::cout << "----------" << std::endl;
-      std::cout << "circle_angle:" << circle_angle << std::endl;
-      std::cout << "count_slice:" << count_slice << std::endl;
-      std::cout << "goal_angle:" << goal_angle << std::endl;
-      std::cout << "goal_x:" << goal_x << std::endl;
-      std::cout << "goal_y:" << goal_y << std::endl;
-      std::cout << "enemy_x:" << enemy_pose.pose.position.x << std::endl;
-      std::cout << "enemy_y:" << enemy_pose.pose.position.y << std::endl;
-      std::cout << "cos_goal_angle:" << cos(goal_angle * 3.14159265 / 180.) << std::endl;
-      std::cout << "sin_goal_angle:" << sin(goal_angle * 3.14159265 / 180.) << std::endl;
+      // std::cout << "----------" << std::endl;
+      // std::cout << "circle_angle:" << circle_angle << std::endl;
+      // std::cout << "count_slice:" << count_slice << std::endl;
+      // std::cout << "goal_angle:" << goal_angle << std::endl;
+      // std::cout << "goal_x:" << goal_x << std::endl;
+      // std::cout << "goal_y:" << goal_y << std::endl;
+      // std::cout << "enemy_x:" << enemy_pose.pose.position.x << std::endl;
+      // std::cout << "enemy_y:" << enemy_pose.pose.position.y << std::endl;
+      // std::cout << "cos_goal_angle:" << cos(goal_angle * 3.14159265 / 180.) << std::endl;
+      // std::cout << "sin_goal_angle:" << sin(goal_angle * 3.14159265 / 180.) << std::endl;
     }
     pendulum_angle = -pendulum_angle;
+    // 如果目标在敌方基地附近则返回失败
+    if (goal_x > 1.8 && goal_y < 4.7) {
+      return false;
+    }
     // 规划失败，如果底盘正在运行则返回成功，否则返回失败，使用其他行为。
     if(interrupt || goal_x == robot_pose.pose.position.x) {
       auto executor_state = Update();
@@ -133,12 +137,13 @@ class ChaseBehavior {
       auto executor_state = Update();
       if (executor_state != BehaviorState::RUNNING) {
         // 平移角度过小，开启快速自旋。
-        if(-pendulum_angle * 0.5 < (circle_angle - goal_angle) && (circle_angle - goal_angle) < pendulum_angle * 0.5) {
-          chassis_executor_->Execute(roborts_decision::SPINFAST);
-        } else {
-          // 低速自旋
-          chassis_executor_->Execute(roborts_decision::SPINLOW);
-        }
+        // if(-pendulum_angle * 0.5 < (circle_angle - goal_angle) && (circle_angle - goal_angle) < pendulum_angle * 0.5) {
+        //   chassis_executor_->Execute(roborts_decision::SPINFAST);
+        // } else {
+        //   // 低速自旋
+        //   chassis_executor_->Execute(roborts_decision::SPINLOW);
+        // }
+        chassis_executor_->Execute(roborts_decision::SPINFAST);
         goal_pose.header.stamp = ros::Time::now();
         goal_pose.pose.position.x = goal_x;
         goal_pose.pose.position.y = goal_y;

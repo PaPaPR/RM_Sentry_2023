@@ -141,39 +141,74 @@ wing_bot_task_point {
   yaw:   1.57
 }
 
+# ↓↓↓ b4 ↓↓↓
+# search_region_1 {
+#   x: 4.5
+#   y: 5.5
+#   z: 0
+
+#   roll:  0
+#   pitch: 0
+#   yaw:   0
+# }
+
+# search_region_1 {
+#   x: 4.1
+#   y: 3.3
+#   z: 0
+
+#   roll:  0
+#   pitch: 0
+#   yaw:   0
+# }
+
+# search_region_1 {
+#   x: 2.2
+#   y: 3.1
+#   z: 0
+
+#   roll:  0
+#   pitch: 0
+#   yaw:   0
+# }
+
+# search_region_1 {
+#   x: 2.3
+#   y: 5.6
+#   z: 0
+
+#   roll:  0
+#   pitch: 0
+#   yaw:   0
+# }
+# ↑↑↑ b4 ↑↑↑
+
+# ↓↓↓ rmul OFFEND ↓↓↓
 search_region_1 {
-  x: 2.86
-  y: 2.50
+  x: 0.7
+  y: 3.0
   z: 0
 
   roll:  0
   pitch: 0
-  yaw:   -1.57
+  yaw:   0
 }
 
 search_region_1 {
-  x: 1.78
-  y: 0.94
+  x: 1.45
+  y: 4.7
   z: 0
 
   roll:  0
   pitch: 0
-  yaw:   3.14
+  yaw:   0
 }
+# ↑↑↑ rmul OFFEND ↑↑↑
 
-search_region_1 {
-  x: 1.4
-  y: 2.18
-  z: 0
-
-  roll:  0
-  pitch: 0
-  yaw:   1.57
-}
-
+# ↓↓↓ rmul OFFEND_FAR ↓↓↓
 search_region_2 {
-  x: 5.35
-  y: 0.8
+  x: 2.0
+  y: 5.5
   z: 0
 
   roll:  0
@@ -182,48 +217,42 @@ search_region_2 {
 }
 
 search_region_2 {
-  x: 7.40
-  y: 2.10
+  x: 1.0
+  y: 5.5
   z: 0
 
   roll:  0
   pitch: 0
-  yaw:   1.57
+  yaw:   0
 }
+# ↑↑↑ rmul OFFEND_FAR ↑↑↑
 
-search_region_2 {
-  x: 5.35
-  y: 2.24
+# ↓↓↓ rmul SUPPLY ↓↓↓
+search_region_3 {
+  x: 3.7
+  y: 6.6
   z: 0
 
   roll:  0
   pitch: 0
-  yaw:   3.14
+  yaw:   0
 }
 
 search_region_3 {
-  x: 3.05
-  y: 4.56
+  x: 4.7
+  y: 5.8
   z: 0
 
   roll:  0
   pitch: 0
-  yaw:   3.14
+  yaw:   0
 }
+# ↑↑↑ rmul SUPPLY ↑↑↑
 
-search_region_3 {
-  x: 0.8
-  y: 4.02
-  z: 0
-
-  roll:  0
-  pitch: 0
-  yaw:   -1.57
-}
-
-search_region_3 {
-  x: 2.84
-  y: 3.47
+# ↓↓↓ rmul GUARD ↓↓↓
+search_region_4 {
+  x: 3.8
+  y: 8.7
   z: 0
 
   roll:  0
@@ -232,36 +261,144 @@ search_region_3 {
 }
 
 search_region_4 {
-  x: 5.55
-  y: 2.93
-  z: 0
-
-  roll:  0
-  pitch: 0
-  yaw:   1.57
-}
-
-search_region_4 {
-  x: 6.14
-  y: 4.34
+  x: 5.4
+  y: 9.0
   z: 0
 
   roll:  0
   pitch: 0
   yaw:   0
 }
+# ↑↑↑ rmul GUARD ↑↑↑
 
-search_region_4 {
-  x: 6.83
-  y: 3.05
+# ↓↓↓ rmul RUN ↓↓↓
+search_region_5 {
+  x: 4.6
+  y: 9.0
   z: 0
 
   roll:  0
   pitch: 0
-  yaw:   -1.57
+  yaw:   0
 }
+search_region_5 {
+  x: 7.0
+  y: 6.0
+  z: 0
 
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+search_region_5 {
+  x: 2.0
+  y: 6.0
+  z: 0
 
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+search_region_5 {
+  x: 2.0
+  y: 3.3
+  z: 0
 
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+# ↑↑↑ rmul RUN ↑↑↑
 
+# # ↓↓↓ use rmul in b4 ↓↓↓
+# search_region_1 {
+#   x: 4.2
+#   y: 9.8
+#   z: 0
 
+#   roll:  0
+#   pitch: 0
+#   yaw:   0
+# }
+# search_region_1 {
+#   x: 4.2
+#   y: 8.4
+#   z: 0
+
+#   roll:  0
+#   pitch: 0
+#   yaw:   0
+# }
+# search_region_2 {
+#   x: 4.2
+#   y: 9.8
+#   z: 0
+
+#   roll:  0
+#   pitch: 0
+#   yaw:   0
+# }
+# search_region_2 {
+#   x: 4.2
+#   y: 8.4
+#   z: 0
+
+#   roll:  0
+#   pitch: 0
+#   yaw:   0
+# }
+# search_region_3 {
+#   x: 4.2
+#   y: 9.8
+#   z: 0
+
+#   roll:  0
+#   pitch: 0
+#   yaw:   0
+# }
+# search_region_3 {
+#   x: 4.2
+#   y: 8.4
+#   z: 0
+
+#   roll:  0
+#   pitch: 0
+#   yaw:   0
+# }
+# search_region_4 {
+#   x: 4.2
+#   y: 9.8
+#   z: 0
+
+#   roll:  0
+#   pitch: 0
+#   yaw:   0
+# }
+# search_region_4 {
+#   x: 4.2
+#   y: 8.4
+#   z: 0
+
+#   roll:  0
+#   pitch: 0
+#   yaw:   0
+# }
+# search_region_5 {
+#   x: 4.2
+#   y: 9.8
+#   z: 0
+
+#   roll:  0
+#   pitch: 0
+#   yaw:   0
+# }
+# search_region_5 {
+#   x: 4.2
+#   y: 8.4
+#   z: 0
+
+#   roll:  0
+#   pitch: 0
+#   yaw:   0
+# }
+# # ↑↑↑ use rmul in b4 ↑↑↑

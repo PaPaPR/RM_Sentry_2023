@@ -68,6 +68,7 @@ add_service_files(
   # Service1.srv
   # Service2.srv
   UpdateMapTF.srv
+  AutoAimWorking.srv
 )
 
 ## Generate actions in the 'action' folder
