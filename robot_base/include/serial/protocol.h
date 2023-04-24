@@ -25,7 +25,7 @@ struct INFChassisGimbalBuf {
 #define REFEREE_RMUL (unsigned)'B'
 struct RefereeRMULBuf {
   uint8_t game_progress{0};         // 比赛阶段
-  uint8_t game_progress_remain{0};  // 该比赛阶段剩余时间
+  uint16_t game_progress_remain{0};  // 该比赛阶段剩余时间
   uint8_t robot_id{7};
   uint8_t armor_hited_plate_id{0};
   uint16_t sentry_hp{600};

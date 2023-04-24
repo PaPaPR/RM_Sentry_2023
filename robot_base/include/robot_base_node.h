@@ -103,6 +103,6 @@ class robot_base_node {
                            robot_base::UpdateMapTF::Response &res);
   void ListenTF();
   void SendTF();
-  void LaserDynamicTFCB(const sensor_msgs::LaserScan::ConstPtr& msg);
+  // void LaserDynamicTFCB(const sensor_msgs::LaserScan::ConstPtr& msg);
   void RefereeRMULCB(const RefereeRMULBuf &_inf);
 };
