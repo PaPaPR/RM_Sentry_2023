@@ -5,8 +5,8 @@
     <node pkg="tf2_ros" type="static_transform_publisher" name="odom_gimbal_link_center_broadcaster"
           args="-0.08 0.124 0.0 0.0 0.0 0.0 /aft_mapped /gimbal_odom_center" />
 
-    <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="gimbal_link_to_laser_link_center_broadcaster"
-          args="0.0 0.0 0.0  0.0 0.0 0.0 /gimbal_link /laser_link" /> -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="gimbal_link_to_laser_link_center_broadcaster"
+          args="0.0 0.0 0.0  0.0 0.0 0.0 /gimbal_link /laser_link" />
 
     <node pkg="tf2_ros" type="static_transform_publisher" name="laser_link_center_to_livox_frame_broadcaster"
           args="0.08 -0.124 0.0  0.0 0.0 0.0 /laser_link /livox_frame" />

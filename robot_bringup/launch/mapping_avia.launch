@@ -3,7 +3,7 @@
 
 	<arg name="rviz" default="false" />
 
-	<node pkg="point_lio" type="pointlio_mapping" name="laserMapping" output="screen">
+	<node pkg="point_lio" type="pointlio_mapping" name="laserMapping" output="screen" respawn="true">
 
     <!-- <remap from="/aft_mapped_to_init" to="/odom"/> -->
 

@@ -1,3 +1,5 @@
 <launch>
-  <node name="WolfVision" pkg="WolfVision" type="WolfVision" output="screen" respawn="true"/>
+  <node name="WolfVision" pkg="WolfVision" type="WolfVision" output="screen" respawn="true">
+		<param name="search_yaw_speed" type="double" value="5.0"/>
+  </node>
 </launch>
