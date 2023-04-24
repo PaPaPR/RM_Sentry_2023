@@ -46,8 +46,6 @@ robot_base_node::robot_base_node()
       nh_.subscribe("/cmd_gimbal_rate", 1, &robot_base_node::GimbalRateCmdCB, this);
   autoaim_cmd_sub =
       nh_.subscribe("/cmd_autoaim", 1, &robot_base_node::AutoAimCmdCB, this);
-  laser_sub =
-      nh_.subscribe("/scan", 1, &robot_base_node::LaserDynamicTFCB, this);
 
   gimbal_angle_pub = nh_.advertise<roborts_msgs::GimbalAngle>("/inf_gimbal_angle", 1);
   referee_rmul_pub_ = nh_.advertise<robot_base::RefereeRMUL>("/referee", 1);
@@ -269,7 +267,7 @@ void robot_base_node::UpdateVelLoop() {
   }
 }
 
-// To-do: 初始化后位置大概正确但有偏转
+// map 到 gimbal_link 相比设置的初始位置相差的 xy 和角度，加上 gimbal_link 到 odom 的变化
 void robot_base_node::UpdateMapTF() {
   map_tf_.transform.translation.x =
       odom_tfl_.transform.translation.x + map_init_x_;
@@ -368,19 +366,6 @@ void robot_base_node::RefereeRMULCB(const RefereeRMULBuf &_referee) {
   if(!no_referee_) {
     referee_rmul_pub_.publish(referee);
   }
-}
-
-void robot_base_node::LaserDynamicTFCB(const sensor_msgs::LaserScan::ConstPtr& msg) {
-  // 读取 map 到 base link ，发布 map 到 laser link
-  laser_link_tf_.header.stamp = ros::Time::now();
-  laser_link_tf_.transform.translation.x = map2gimbal_link_tfl_.transform.translation.x;
-  laser_link_tf_.transform.translation.y = map2gimbal_link_tfl_.transform.translation.y;
-  laser_link_tf_.transform.translation.z = map2gimbal_link_tfl_.transform.translation.z;
-  laser_link_tf_.transform.rotation.x = map2gimbal_link_tfl_.transform.rotation.x;
-  laser_link_tf_.transform.rotation.y = map2gimbal_link_tfl_.transform.rotation.y;
-  laser_link_tf_.transform.rotation.z = map2gimbal_link_tfl_.transform.rotation.z;
-  laser_link_tf_.transform.rotation.w = map2gimbal_link_tfl_.transform.rotation.w;
-  laser_link_br_.sendTransform(laser_link_tf_);
 }
 
 int main(int argc, char **argv) {
